@@ -1,3 +1,4 @@
+<!DOCTYPE html>
 <html lang="ru">
 <head>
 <meta charset="UTF-8" />
@@ -163,6 +164,8 @@ button:hover {
     .table-wrapper { overflow: visible; }
 }
 </style>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 </head>
 <body>
 
@@ -297,7 +300,8 @@ button:hover {
 </div>
 
 <div style="margin-top:20px;display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px;">
-<button onclick="window.print()">Распечатать / PDF</button>
+<button onclick="generatePDF()">Сформировать PDF с планировкой</button>
+<button onclick="window.print()">Печать / PDF через браузер</button>
 <button onclick="copyResult()">Скопировать расчет</button>
 <button onclick="sendEmail()">Отправить на почту</button>
 <button onclick="sendTelegram()">Telegram / MAX</button>
@@ -537,9 +541,48 @@ function sendEmail(){
     window.location.href = `mailto:?subject=Ипотечный расчет&body=${text}`;
 }
 
+async function generatePDF(){
+    const area = document.getElementById('pdfArea');
+
+    if(!document.getElementById('printLayoutImage').src){
+        alert('Сначала добавьте планировку квартиры. Без нее PDF будет только с расчетом.');
+    }
+
+    const canvas = await html2canvas(area, {
+        scale: 2,
+        useCORS: true,
+        backgroundColor: '#ffffff'
+    });
+
+    const imgData = canvas.toDataURL('image/png');
+    const { jsPDF } = window.jspdf;
+    const pdf = new jsPDF('p', 'mm', 'a4');
+
+    const pageWidth = 210;
+    const pageHeight = 297;
+    const imgWidth = pageWidth - 20;
+    const imgHeight = canvas.height * imgWidth / canvas.width;
+
+    let heightLeft = imgHeight;
+    let position = 10;
+
+    pdf.addImage(imgData, 'PNG', 10, position, imgWidth, imgHeight);
+    heightLeft -= pageHeight;
+
+    while (heightLeft > 0) {
+        position = heightLeft - imgHeight + 10;
+        pdf.addPage();
+        pdf.addImage(imgData, 'PNG', 10, position, imgWidth, imgHeight);
+        heightLeft -= pageHeight;
+    }
+
+    pdf.save('ipoteka-sber-domclick-raschet-s-planirovkoy.pdf');
+
+    alert('PDF сформирован. Теперь отправьте скачанный файл клиенту по почте, в Telegram или MAX. Автоматически прикрепить файл к письму или мессенджеру браузер не разрешает.');
+}
+
 function sendTelegram(){
-    const text = encodeURIComponent(buildResultText());
-    window.open(`https://t.me/share/url?url=&text=${text}`,'_blank');
+    alert('Сначала нажмите «Сформировать PDF с планировкой», затем отправьте скачанный PDF клиенту в Telegram или MAX. Автоматически прикрепить файл через браузер нельзя.');
 }
 </script>
 
