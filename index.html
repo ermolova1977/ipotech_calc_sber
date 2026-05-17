@@ -206,12 +206,17 @@ button:hover {
 <option value="18.5">Новостройка</option>
 </select>
 
-<label>Планировка квартиры / изображение</label>
-<input type="file" id="layoutFile" accept="image/*" onchange="previewLayout(event)" />
+<label>Планировка квартиры</label>
+<input type="file" id="layoutFile" accept="image/*" onchange="previewLayout(event)" style="display:none;" />
 
-<div id="layoutPreviewBox" style="display:none;margin-top:12px;">
-    <div style="font-weight:bold;margin-bottom:8px;">Загруженная планировка:</div>
+<button type="button" onclick="document.getElementById('layoutFile').click()" style="background:#1f8fff;margin-top:8px;">
+Добавить планировку / фото квартиры
+</button>
+
+<div id="layoutPreviewBox" style="display:none;margin-top:14px;padding:12px;border:2px dashed #0ba360;border-radius:14px;background:#f7faf8;">
+    <div style="font-weight:bold;margin-bottom:8px;color:#0ba360;">Планировка добавлена:</div>
     <img id="layoutPreview" src="" alt="Планировка квартиры" style="width:100%;max-height:320px;object-fit:contain;border:1px solid #ddd;border-radius:12px;background:#fff;" />
+    <button type="button" onclick="removeLayout()" style="background:#777;margin-top:10px;">Удалить планировку</button>
 </div>
 
 <label>Стоимость квартиры</label>
@@ -503,6 +508,14 @@ function previewLayout(event){
         document.getElementById('printLayoutBox').style.display = 'block';
     };
     reader.readAsDataURL(file);
+}
+
+function removeLayout(){
+    document.getElementById('layoutFile').value = '';
+    document.getElementById('layoutPreview').src = '';
+    document.getElementById('printLayoutImage').src = '';
+    document.getElementById('layoutPreviewBox').style.display = 'none';
+    document.getElementById('printLayoutBox').style.display = 'none';
 }
 
 function buildResultText(){
