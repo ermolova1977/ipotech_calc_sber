@@ -6,519 +6,133 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <style>
-:root{
-    --green:#08a652;
-    --dark:#17212b;
-    --light:#f4f7f6;
-    --gray:#6f7b86;
-    --border:#dfe8e3;
-}
-
+:root{--green:#08a652;--green2:#3cc985;--gray:#65717d;--light:#f4f8f6;--border:#dfe8e3;}
 *{box-sizing:border-box;}
-body{
-    margin:0;
-    font-family:Arial, Helvetica, sans-serif;
-    background:#f3f5f7;
-    color:#202020;
-}
-header{
-    background:linear-gradient(90deg,#08a652,#3cc985);
-    color:#fff;
-    padding:22px 30px;
-    font-size:28px;
-    font-weight:800;
-}
+body{margin:0;font-family:Arial,Helvetica,sans-serif;background:#f3f5f7;color:#202020;}
+header{background:linear-gradient(90deg,var(--green),var(--green2));color:#fff;padding:22px 30px;font-size:28px;font-weight:800;}
 .container{max-width:1560px;margin:0 auto;padding:22px;}
 .grid{display:grid;grid-template-columns:430px 1fr;gap:22px;align-items:start;}
-.card{
-    background:#fff;
-    border-radius:18px;
-    padding:22px;
-    box-shadow:0 6px 20px rgba(0,0,0,.08);
-}
+.card{background:#fff;border-radius:18px;padding:22px;box-shadow:0 6px 20px rgba(0,0,0,.08);margin-bottom:22px;}
 h2{margin:0 0 18px;color:var(--green);font-size:24px;}
 h3{margin:0 0 12px;color:#222;}
 label{display:block;margin:13px 0 6px;font-weight:700;}
-input,select{
-    width:100%;
-    padding:12px;
-    border:1px solid #cfd9d4;
-    border-radius:11px;
-    font-size:15px;
-    background:#fff;
-}
-button{
-    width:100%;
-    padding:14px 16px;
-    border:0;
-    border-radius:13px;
-    background:var(--green);
-    color:white;
-    font-weight:800;
-    font-size:16px;
-    cursor:pointer;
-}
+input,select{width:100%;padding:12px;border:1px solid #cfd9d4;border-radius:11px;font-size:15px;background:#fff;}
+button{width:100%;padding:14px 16px;border:0;border-radius:13px;background:var(--green);color:white;font-weight:800;font-size:16px;cursor:pointer;}
 button:hover{background:#078f48;}
-.btn-blue{background:#1f8fff;}
-.btn-blue:hover{background:#1777d6;}
-.btn-gray{background:#65717d;}
-.btn-gray:hover{background:#4f5964;}
+.btn-blue{background:#1f8fff;}.btn-gray{background:#65717d;}.btn-gray:hover{background:#4f5964;}
 .actions{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:12px;margin-top:20px;}
 .result-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:14px;}
-.result-box{
-    background:#f7faf8;
-    border-left:7px solid var(--green);
-    border-radius:16px;
-    padding:16px;
-}
+.result-box{background:#f7faf8;border-left:7px solid var(--green);border-radius:16px;padding:16px;}
 .result-box h3{font-size:15px;color:#333;margin:0 0 8px;}
 .big{font-size:28px;font-weight:900;color:var(--green);}
-.warning,.success{
-    padding:14px;
-    border-radius:12px;
-    margin-top:15px;
-    line-height:1.45;
-}
+.warning,.success{padding:14px;border-radius:12px;margin-top:15px;line-height:1.45;}
 .warning{background:#fff4d6;color:#835500;border:1px solid #f0c36d;}
 .success{background:#e9fff2;color:#0a713b;border:1px solid #84e2b0;}
-.table-wrapper{overflow-x:auto;margin-top:18px;}
-table{width:100%;border-collapse:collapse;}
-th{background:var(--green);color:#fff;padding:11px;}
-td{border:1px solid #dde5e0;padding:10px;text-align:center;}
-.options-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px;}
-.check-row{display:flex;gap:8px;align-items:center;background:#f7faf8;border:1px solid #e1ece6;border-radius:10px;padding:9px;font-size:14px;}
-.check-row input{width:auto;}
-.layout-box{display:none;margin-top:14px;padding:12px;border:2px dashed var(--green);border-radius:14px;background:#f7faf8;}
-.layout-box img{width:100%;max-height:340px;object-fit:contain;border:1px solid #ddd;border-radius:12px;background:#fff;}
+.table-wrapper{overflow-x:auto;margin-top:18px;}table{width:100%;border-collapse:collapse;}th{background:var(--green);color:#fff;padding:11px;}td{border:1px solid #dde5e0;padding:10px;text-align:center;}
+.options-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px;}.check-row{display:flex;gap:8px;align-items:center;background:#f7faf8;border:1px solid #e1ece6;border-radius:10px;padding:9px;font-size:14px;}.check-row input{width:auto;}
+.layout-box{display:none;margin-top:14px;padding:12px;border:2px dashed var(--green);border-radius:14px;background:#f7faf8;}.layout-box img{width:100%;max-height:340px;object-fit:contain;border:1px solid #ddd;border-radius:12px;background:#fff;}
 .footer-note{margin-top:16px;color:#68737d;font-size:13px;line-height:1.45;}
-
-/* PDF template */
-#pdfTemplate{
-    position:fixed;
-    left:-99999px;
-    top:0;
-    width:1120px;
-    min-height:1584px;
-    background:#fff;
-    color:#1f1f1f;
-    padding:48px;
-    font-family:Arial, Helvetica, sans-serif;
-}
-.pdf-header{
-    display:flex;
-    justify-content:space-between;
-    align-items:flex-start;
-    border-bottom:4px solid var(--green);
-    padding-bottom:22px;
-    margin-bottom:28px;
-}
-.pdf-title{font-size:42px;line-height:1.1;font-weight:900;color:var(--green);max-width:720px;}
-.pdf-logo{text-align:right;font-size:30px;font-weight:900;color:#214c42;line-height:1.1;}
-.pdf-date{font-size:16px;color:#6d777f;margin-top:10px;}
-.pdf-main{display:grid;grid-template-columns:52% 44%;gap:4%;align-items:start;}
-.pdf-plan-card,.pdf-info-card{
-    border:2px solid #e4eee8;
-    border-radius:24px;
-    padding:22px;
-    background:#fbfdfc;
-}
-.pdf-plan-card h3,.pdf-info-card h3,.pdf-section h3{font-size:25px;color:var(--green);margin:0 0 16px;}
-#pdfLayoutImage{
-    width:100%;
-    height:660px;
-    object-fit:contain;
-    border:1px solid #d5ded9;
-    border-radius:18px;
-    background:#fff;
-}
-.pdf-metric{
-    background:#f4f8f6;
-    border-left:8px solid var(--green);
-    border-radius:18px;
-    padding:18px 20px;
-    margin-bottom:14px;
-}
-.pdf-metric-title{font-size:19px;font-weight:800;color:#2b2b2b;margin-bottom:6px;}
-.pdf-metric-value{font-size:34px;font-weight:900;color:var(--green);}
-.pdf-section{margin-top:28px;}
-.pdf-details{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;}
-.pdf-detail{
-    border:1px solid #dce7e1;
-    border-radius:16px;
-    padding:14px;
-    background:#fff;
-}
-.pdf-detail span{display:block;font-size:14px;color:#6b757d;margin-bottom:6px;}
-.pdf-detail strong{font-size:19px;color:#202020;}
-.pdf-manager{
-    margin-top:28px;
-    display:grid;
-    grid-template-columns:1fr 1fr;
-    gap:16px;
-}
-.pdf-note{
-    margin-top:28px;
-    padding:16px;
-    border-radius:16px;
-    background:#eefaf4;
-    color:#24664a;
-    font-size:16px;
-    line-height:1.45;
-}
-.pdf-empty-plan{
-    height:660px;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    color:#8a9690;
-    font-size:22px;
-    border:2px dashed #c9d8d0;
-    border-radius:18px;
-    background:#fff;
-}
-
+#pdfTemplate{position:fixed;left:-20000px;top:0;width:1120px;min-height:1584px;background:#fff;color:#1f1f1f;padding:48px;font-family:Arial,Helvetica,sans-serif;}
+.pdf-header{display:flex;justify-content:space-between;align-items:flex-start;border-bottom:4px solid var(--green);padding-bottom:22px;margin-bottom:28px;}.pdf-title{font-size:42px;line-height:1.1;font-weight:900;color:var(--green);max-width:720px;}.pdf-logo{text-align:right;font-size:30px;font-weight:900;color:#214c42;line-height:1.1;}.pdf-date{font-size:16px;color:#6d777f;margin-top:10px;}
+.pdf-main{display:grid;grid-template-columns:52% 44%;gap:4%;align-items:start;}.pdf-plan-card,.pdf-info-card{border:2px solid #e4eee8;border-radius:24px;padding:22px;background:#fbfdfc;}.pdf-plan-card h3,.pdf-info-card h3,.pdf-section h3{font-size:25px;color:var(--green);margin:0 0 16px;}
+#pdfLayoutImage{width:100%;height:660px;object-fit:contain;border:1px solid #d5ded9;border-radius:18px;background:#fff;}.pdf-empty-plan{height:660px;display:flex;align-items:center;justify-content:center;color:#8a9690;font-size:22px;border:2px dashed #c9d8d0;border-radius:18px;background:#fff;}
+.pdf-metric{background:#f4f8f6;border-left:8px solid var(--green);border-radius:18px;padding:18px 20px;margin-bottom:14px;}.pdf-metric-title{font-size:19px;font-weight:800;color:#2b2b2b;margin-bottom:6px;}.pdf-metric-value{font-size:34px;font-weight:900;color:var(--green);}
+.pdf-section{margin-top:28px;}.pdf-details{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;}.pdf-detail{border:1px solid #dce7e1;border-radius:16px;padding:14px;background:#fff;}.pdf-detail span{display:block;font-size:14px;color:#6b757d;margin-bottom:6px;}.pdf-detail strong{font-size:19px;color:#202020;}.pdf-manager{margin-top:28px;display:grid;grid-template-columns:1fr 1fr;gap:16px;}.pdf-note{margin-top:28px;padding:16px;border-radius:16px;background:#eefaf4;color:#24664a;font-size:16px;line-height:1.45;}
 @media(max-width:1050px){.grid{grid-template-columns:1fr}.options-grid{grid-template-columns:1fr}}
-@media print{
-    header,.left-panel,.actions,#alerts,.manager-card,.screen-only{display:none!important;}
-    body{background:#fff;}
-    .container{padding:0;max-width:100%;}
-    .grid{display:block;}
-    .card{box-shadow:none;border-radius:0;}
-}
 </style>
 </head>
 <body>
 <header>Ипотечный калькулятор Сбер / Домклик PRO</header>
-
-<div class="container">
-<div class="grid">
-
-<div class="card left-panel">
+<div class="container"><div class="grid">
+<div class="card">
 <h2>Параметры сделки</h2>
-
-<label>Регион</label>
-<select id="region"><option>Белгородская область</option><option>Москва</option><option>Санкт-Петербург</option><option>Другие регионы</option></select>
-
-<label>Объект с ПФ/эскроу Сбера?</label>
-<select id="escrow"><option value="yes">Да</option><option value="no">Нет</option></select>
-
-<label>Категория заемщика</label>
-<select id="salary"><option value="yes">Зарплатный клиент Сбера</option><option value="no">Не зарплатный клиент</option></select>
-
-<label>Программа кредитования</label>
-<select id="program">
-<option value="19.2" data-name="Акция для застройщиков">Акция для застройщиков</option>
-<option value="6" data-name="Семейная ипотека">Семейная ипотека</option>
-<option value="5" data-name="IT-ипотека">IT-ипотека</option>
-<option value="2" data-name="ДВИ">ДВИ</option>
-<option value="18.5" data-name="Новостройка">Новостройка</option>
-</select>
-
-<label>Планировка квартиры</label>
-<input type="file" id="layoutFile" accept="image/*" onchange="previewLayout(event)" style="display:none;" />
-<button type="button" class="btn-blue" onclick="document.getElementById('layoutFile').click()">Добавить планировку / фото квартиры</button>
-<div id="layoutPreviewBox" class="layout-box">
-    <div style="font-weight:bold;margin-bottom:8px;color:var(--green);">Планировка добавлена:</div>
-    <img id="layoutPreview" src="" alt="Планировка квартиры" />
-    <button type="button" class="btn-gray" onclick="removeLayout()" style="margin-top:10px;">Удалить планировку</button>
-</div>
-
+<label>Регион</label><select id="region"><option>Белгородская область</option><option>Москва</option><option>Санкт-Петербург</option><option>Другие регионы</option></select>
+<label>Объект с ПФ/эскроу Сбера?</label><select id="escrow"><option value="yes">Да</option><option value="no">Нет</option></select>
+<label>Категория заемщика</label><select id="salary"><option value="yes">Зарплатный клиент Сбера</option><option value="no">Не зарплатный клиент</option></select>
+<label>Программа кредитования</label><select id="program"><option value="19.2" data-name="Акция для застройщиков">Акция для застройщиков</option><option value="6" data-name="Семейная ипотека">Семейная ипотека</option><option value="5" data-name="IT-ипотека">IT-ипотека</option><option value="2" data-name="ДВИ">ДВИ</option><option value="18.5" data-name="Новостройка">Новостройка</option></select>
+<label>Планировка квартиры</label><input type="file" id="layoutFile" accept="image/*" onchange="previewLayout(event)" style="display:none;" /><button type="button" class="btn-blue" onclick="document.getElementById('layoutFile').click()">Добавить планировку / фото квартиры</button><div id="layoutPreviewBox" class="layout-box"><div style="font-weight:bold;margin-bottom:8px;color:var(--green);">Планировка добавлена:</div><img id="layoutPreview" src="" alt="Планировка квартиры" /><button type="button" class="btn-gray" onclick="removeLayout()" style="margin-top:10px;">Удалить планировку</button></div>
 <label>Стоимость квартиры</label><input type="number" id="price" value="8000000" />
 <label>Первоначальный взнос</label><input type="number" id="down" value="2000000" />
 <label>Срок кредита, лет</label><input type="number" id="years" value="30" />
 <label>Месяцев до сдачи дома</label><input type="number" id="construction" value="18" />
-
-<label>Комплексный продукт</label>
-<select id="complex">
-<option value="0" data-name="Не применяется">Не применяется</option>
-<option value="1" data-name="Весь срок — Схема 1">Весь срок — Схема 1</option>
-<option value="2" data-name="Весь срок — Схема 2">Весь срок — Схема 2</option>
-<option value="0.5" data-name="Период строительства — Схема 1">Период строительства — Схема 1</option>
-<option value="1.5" data-name="Период строительства — Схема 2">Период строительства — Схема 2</option>
-</select>
-
-<label>Субсидирование</label>
-<select id="subsidy">
-<option value="0" data-name="Нет">Нет</option>
-<option value="1" data-name="1 год">1 год</option>
-<option value="2" data-name="2 года">2 года</option>
-<option value="3" data-name="3 года">3 года</option>
-<option value="5" data-name="5 лет">5 лет</option>
-<option value="99" data-name="Весь срок">Весь срок</option>
-</select>
-
-<label>Скидка за страхование</label>
-<select id="insurance"><option value="1">Да (-1%)</option><option value="0">Нет</option></select>
-
-<button onclick="calculate()">Рассчитать</button>
+<label>Комплексный продукт</label><select id="complex"><option value="0" data-name="Не применяется">Не применяется</option><option value="1" data-name="Весь срок — Схема 1">Весь срок — Схема 1</option><option value="2" data-name="Весь срок — Схема 2">Весь срок — Схема 2</option><option value="0.5" data-name="Период строительства — Схема 1">Период строительства — Схема 1</option><option value="1.5" data-name="Период строительства — Схема 2">Период строительства — Схема 2</option></select>
+<label>Субсидирование</label><select id="subsidy"><option value="0" data-name="Нет">Нет</option><option value="1" data-name="1 год">1 год</option><option value="2" data-name="2 года">2 года</option><option value="3" data-name="3 года">3 года</option><option value="5" data-name="5 лет">5 лет</option><option value="99" data-name="Весь срок">Весь срок</option></select>
+<label>Скидка за страхование</label><select id="insurance"><option value="1">Да (-1%)</option><option value="0">Нет</option></select>
+<button type="button" onclick="calculate()">Рассчитать</button>
 </div>
-
 <div>
-<div class="card">
-<h2>Результат расчета</h2>
-<div class="result-grid">
-<div class="result-box"><h3>Итоговая ставка</h3><div class="big" id="rateResult">0%</div></div>
-<div class="result-box"><h3>Платеж в льготный период</h3><div class="big" id="paymentPromo">0 ₽</div></div>
-<div class="result-box"><h3>Платеж после льготного периода</h3><div class="big" id="paymentBase">0 ₽</div></div>
-<div class="result-box"><h3>Экономия клиента</h3><div class="big" id="saving">0 ₽</div></div>
-</div>
-
-<div class="actions">
-<button onclick="generatePDF()">Сформировать PDF для клиента</button>
-<button onclick="copyResult()">Скопировать расчет</button>
-<button onclick="sendEmail()">Отправить на почту</button>
-<button onclick="sendTelegram()">Telegram / MAX</button>
-</div>
-<div id="alerts"></div>
-</div>
-
-<div class="card manager-card">
-<h2>Настройки PDF и данные менеджера</h2>
-<label>Имя менеджера</label><input id="managerName" value="Менеджер отдела продаж" />
-<label>Телефон менеджера</label><input id="managerPhone" value="+7 (___) ___-__-__" />
-<label>Название ЖК / объекта</label><input id="objectName" value="ЖК / объект" />
-
-<label>Что показывать клиенту в PDF</label>
-<div class="options-grid">
-<label class="check-row"><input type="checkbox" id="showPrice" checked /> Стоимость квартиры</label>
-<label class="check-row"><input type="checkbox" id="showDown" checked /> Первоначальный взнос</label>
-<label class="check-row"><input type="checkbox" id="showLoan" checked /> Сумма кредита</label>
-<label class="check-row"><input type="checkbox" id="showProgram" checked /> Программа ипотеки</label>
-<label class="check-row"><input type="checkbox" id="showSalary" checked /> Зарплатный клиент</label>
-<label class="check-row"><input type="checkbox" id="showComplex" checked /> Комплексный продукт</label>
-<label class="check-row"><input type="checkbox" id="showSubsidy" checked /> Субсидирование</label>
-<label class="check-row"><input type="checkbox" id="showOverpay" /> Переплата</label>
-<label class="check-row"><input type="checkbox" id="showCommission" /> Комиссия застройщика</label>
-<label class="check-row"><input type="checkbox" id="showDiscounts" /> Скидки/дисконты</label>
-</div>
-</div>
-
-<div class="card manager-card">
-<h2>Для менеджера / застройщика</h2>
-<div class="table-wrapper">
-<table>
-<thead><tr><th>Показатель</th><th>Значение</th></tr></thead>
-<tbody>
-<tr><td>Сумма кредита</td><td id="loanAmount"></td></tr>
-<tr><td>Базовая ставка</td><td id="baseRate"></td></tr>
-<tr><td>Скидка зарплатного клиента</td><td id="salaryDiscount"></td></tr>
-<tr><td>Скидка за страхование</td><td id="insuranceDiscount"></td></tr>
-<tr><td>Дисконт КП</td><td id="complexDiscount"></td></tr>
-<tr><td>Субсидирование</td><td id="subsidyDiscount"></td></tr>
-<tr><td>Размер комиссии за субсидию</td><td id="commission"></td></tr>
-<tr><td>Общая переплата</td><td id="overpay"></td></tr>
-<tr><td>Экономия по %</td><td id="profit"></td></tr>
-</tbody>
-</table>
-</div>
-<div class="footer-note">Расчет носит справочный характер. Итоговые ставки и условия подтверждаются банком.</div>
-</div>
-</div>
-</div>
-</div>
-
-<div id="pdfTemplate">
-    <div class="pdf-header">
-        <div>
-            <div class="pdf-title">Коммерческое предложение по ипотеке</div>
-            <div class="pdf-date" id="pdfDate"></div>
-        </div>
-        <div class="pdf-logo">Домклик<br><span style="color:var(--green);font-size:24px;">СБЕР</span></div>
-    </div>
-
-    <div class="pdf-main">
-        <div class="pdf-plan-card">
-            <h3>Планировка квартиры</h3>
-            <img id="pdfLayoutImage" src="" alt="Планировка" style="display:none;" />
-            <div id="pdfEmptyPlan" class="pdf-empty-plan">Планировка не добавлена</div>
-        </div>
-        <div class="pdf-info-card">
-            <h3>Расчет для клиента</h3>
-            <div class="pdf-metric"><div class="pdf-metric-title">Итоговая ставка</div><div class="pdf-metric-value" id="pdfRate"></div></div>
-            <div class="pdf-metric"><div class="pdf-metric-title">Платеж в льготный период</div><div class="pdf-metric-value" id="pdfPromoPayment"></div></div>
-            <div class="pdf-metric"><div class="pdf-metric-title">Платеж после льготного периода</div><div class="pdf-metric-value" id="pdfBasePayment"></div></div>
-            <div class="pdf-metric"><div class="pdf-metric-title">Экономия клиента</div><div class="pdf-metric-value" id="pdfSaving"></div></div>
-        </div>
-    </div>
-
-    <div class="pdf-section">
-        <h3>Параметры сделки</h3>
-        <div class="pdf-details" id="pdfDetails"></div>
-    </div>
-
-    <div class="pdf-manager">
-        <div class="pdf-detail"><span>Менеджер</span><strong id="pdfManagerName"></strong></div>
-        <div class="pdf-detail"><span>Телефон</span><strong id="pdfManagerPhone"></strong></div>
-    </div>
-
-    <div class="pdf-note">Расчет носит справочный характер. Итоговые параметры кредита, ставка и одобрение подтверждаются банком индивидуально.</div>
-</div>
-
+<div class="card"><h2>Результат расчета</h2><div class="result-grid"><div class="result-box"><h3>Итоговая ставка</h3><div class="big" id="rateResult">0%</div></div><div class="result-box"><h3>Платеж в льготный период</h3><div class="big" id="paymentPromo">0 ₽</div></div><div class="result-box"><h3>Платеж после льготного периода</h3><div class="big" id="paymentBase">0 ₽</div></div><div class="result-box"><h3>Экономия клиента</h3><div class="big" id="saving">0 ₽</div></div></div><div class="actions"><button type="button" onclick="generatePDF()">Сформировать PDF для клиента</button><button type="button" onclick="copyResult()">Скопировать расчет</button><button type="button" onclick="sendEmail()">Отправить на почту</button><button type="button" onclick="sendTelegram()">Telegram / MAX</button></div><div id="alerts"></div></div>
+<div class="card"><h2>Настройки PDF и данные менеджера</h2><label>Имя менеджера</label><input id="managerName" value="Менеджер отдела продаж" /><label>Телефон менеджера</label><input id="managerPhone" value="+7 (___) ___-__-__" /><label>Название ЖК / объекта</label><input id="objectName" value="ЖК / объект" /><label>Что показывать клиенту в PDF</label><div class="options-grid"><label class="check-row"><input type="checkbox" id="showPrice" checked /> Стоимость квартиры</label><label class="check-row"><input type="checkbox" id="showDown" checked /> Первоначальный взнос</label><label class="check-row"><input type="checkbox" id="showLoan" checked /> Сумма кредита</label><label class="check-row"><input type="checkbox" id="showProgram" checked /> Программа ипотеки</label><label class="check-row"><input type="checkbox" id="showSalary" checked /> Зарплатный клиент</label><label class="check-row"><input type="checkbox" id="showComplex" checked /> Комплексный продукт</label><label class="check-row"><input type="checkbox" id="showSubsidy" checked /> Субсидирование</label><label class="check-row"><input type="checkbox" id="showOverpay" /> Переплата</label><label class="check-row"><input type="checkbox" id="showCommission" /> Комиссия застройщика</label><label class="check-row"><input type="checkbox" id="showDiscounts" /> Скидки/дисконты</label></div></div>
+<div class="card"><h2>Для менеджера / застройщика</h2><div class="table-wrapper"><table><thead><tr><th>Показатель</th><th>Значение</th></tr></thead><tbody><tr><td>Сумма кредита</td><td id="loanAmount"></td></tr><tr><td>Базовая ставка</td><td id="baseRate"></td></tr><tr><td>Скидка зарплатного клиента</td><td id="salaryDiscount"></td></tr><tr><td>Скидка за страхование</td><td id="insuranceDiscount"></td></tr><tr><td>Дисконт КП</td><td id="complexDiscount"></td></tr><tr><td>Субсидирование</td><td id="subsidyDiscount"></td></tr><tr><td>Размер комиссии за субсидию</td><td id="commission"></td></tr><tr><td>Общая переплата</td><td id="overpay"></td></tr><tr><td>Экономия по %</td><td id="profit"></td></tr></tbody></table></div><div class="footer-note">Расчет носит справочный характер. Итоговые ставки и условия подтверждаются банком.</div></div>
+</div></div></div>
+<div id="pdfTemplate"><div class="pdf-header"><div><div class="pdf-title">Коммерческое предложение по ипотеке</div><div class="pdf-date" id="pdfDate"></div></div><div class="pdf-logo">Домклик<br><span style="color:var(--green);font-size:24px;">СБЕР</span></div></div><div class="pdf-main"><div class="pdf-plan-card"><h3>Планировка квартиры</h3><img id="pdfLayoutImage" src="" alt="Планировка" style="display:none;" /><div id="pdfEmptyPlan" class="pdf-empty-plan">Планировка не добавлена</div></div><div class="pdf-info-card"><h3>Расчет для клиента</h3><div class="pdf-metric"><div class="pdf-metric-title">Итоговая ставка</div><div class="pdf-metric-value" id="pdfRate"></div></div><div class="pdf-metric"><div class="pdf-metric-title">Платеж в льготный период</div><div class="pdf-metric-value" id="pdfPromoPayment"></div></div><div class="pdf-metric"><div class="pdf-metric-title">Платеж после льготного периода</div><div class="pdf-metric-value" id="pdfBasePayment"></div></div><div class="pdf-metric"><div class="pdf-metric-title">Экономия клиента</div><div class="pdf-metric-value" id="pdfSaving"></div></div></div></div><div class="pdf-section"><h3>Параметры сделки</h3><div class="pdf-details" id="pdfDetails"></div></div><div class="pdf-manager"><div class="pdf-detail"><span>Менеджер</span><strong id="pdfManagerName"></strong></div><div class="pdf-detail"><span>Телефон</span><strong id="pdfManagerPhone"></strong></div></div><div class="pdf-note">Расчет носит справочный характер. Итоговые параметры кредита, ставка и одобрение подтверждаются банком индивидуально.</div></div>
 <script>
-let state = {};
-
-function formatMoney(num){return new Intl.NumberFormat('ru-RU').format(Math.round(num)) + ' ₽';}
-function annuity(sum, annualRate, years){
-    const monthlyRate = annualRate / 12 / 100;
-    const months = years * 12;
-    if(monthlyRate <= 0) return sum / months;
-    return sum * (monthlyRate * Math.pow(1 + monthlyRate, months)) / (Math.pow(1 + monthlyRate, months) - 1);
-}
-function selectedText(id){const el=document.getElementById(id);return el.options[el.selectedIndex].dataset.name || el.options[el.selectedIndex].text;}
-function isChecked(id){return document.getElementById(id).checked;}
-
-function previewLayout(event){
-    const file = event.target.files[0];
-    if(!file) return;
-    const reader = new FileReader();
-    reader.onload = function(e){
-        const src = e.target.result;
-        document.getElementById('layoutPreview').src = src;
-        document.getElementById('pdfLayoutImage').src = src;
-        document.getElementById('layoutPreviewBox').style.display = 'block';
-        document.getElementById('pdfLayoutImage').style.display = 'block';
-        document.getElementById('pdfEmptyPlan').style.display = 'none';
-    };
-    reader.readAsDataURL(file);
-}
-function removeLayout(){
-    document.getElementById('layoutFile').value='';
-    document.getElementById('layoutPreview').src='';
-    document.getElementById('pdfLayoutImage').src='';
-    document.getElementById('layoutPreviewBox').style.display='none';
-    document.getElementById('pdfLayoutImage').style.display='none';
-    document.getElementById('pdfEmptyPlan').style.display='flex';
-}
-
+var state = {};
+function rub(n){return new Intl.NumberFormat('ru-RU').format(Math.round(Number(n)||0)) + ' ₽';}
+function pay(sum, rate, years){var m=rate/12/100;var months=years*12;if(m<=0)return sum/months;return sum*(m*Math.pow(1+m,months))/(Math.pow(1+m,months)-1);}
+function selName(id){var e=document.getElementById(id);var o=e.options[e.selectedIndex];return o.getAttribute('data-name') || o.text;}
+function chk(id){return document.getElementById(id).checked;}
+function setText(id,val){document.getElementById(id).innerText=val;}
+function previewLayout(event){var file=event.target.files[0];if(!file)return;var reader=new FileReader();reader.onload=function(e){var src=e.target.result;document.getElementById('layoutPreview').src=src;document.getElementById('pdfLayoutImage').src=src;document.getElementById('layoutPreviewBox').style.display='block';document.getElementById('pdfLayoutImage').style.display='block';document.getElementById('pdfEmptyPlan').style.display='none';};reader.readAsDataURL(file);}
+function removeLayout(){document.getElementById('layoutFile').value='';document.getElementById('layoutPreview').src='';document.getElementById('pdfLayoutImage').src='';document.getElementById('layoutPreviewBox').style.display='none';document.getElementById('pdfLayoutImage').style.display='none';document.getElementById('pdfEmptyPlan').style.display='flex';}
 function calculate(){
-    const price = +document.getElementById('price').value;
-    const down = +document.getElementById('down').value;
-    const years = +document.getElementById('years').value;
-    const construction = +document.getElementById('construction').value;
-    const escrow = document.getElementById('escrow').value;
-    const baseRate = +document.getElementById('program').value;
-    const salary = document.getElementById('salary').value;
-    const insurance = +document.getElementById('insurance').value;
-    const complex = +document.getElementById('complex').value;
-    const subsidy = +document.getElementById('subsidy').value;
-    const loan = price - down;
-    let alerts = '';
+try{
+var price=Number(document.getElementById('price').value)||0;
+var down=Number(document.getElementById('down').value)||0;
+var years=Number(document.getElementById('years').value)||30;
+var construction=Number(document.getElementById('construction').value)||0;
+var escrow=document.getElementById('escrow').value;
+var baseRate=Number(document.getElementById('program').value)||0;
+var salary=document.getElementById('salary').value;
+var insurance=Number(document.getElementById('insurance').value)||0;
+var complex=Number(document.getElementById('complex').value)||0;
+var subsidy=Number(document.getElementById('subsidy').value)||0;
+var loan=Math.max(price-down,0);
+var alerts='';
+var salaryDiscount=salary==='yes'?0.5:0;
+var insuranceDiscount=insurance;
+var complexDiscount=complex;
+if(escrow==='no' && complex>0){alerts+='<div class="warning">Комплексный продукт доступен только для объектов с ПФ/эскроу Сбера.</div>';complexDiscount=0;}
+if(construction<3 && complex>0){alerts+='<div class="warning">До сдачи дома менее 3 месяцев — комплексный продукт недоступен.</div>';complexDiscount=0;}
+if(subsidy>0 && complex>0 && complex<1){alerts+='<div class="warning">Субсидирование совместимо только с КП «на весь срок».</div>';}
+var subsidyDiscount=0;var commissionPercent=0;
+if(subsidy===1){subsidyDiscount=2.1;commissionPercent=0.1;}
+if(subsidy===2){subsidyDiscount=2.5;commissionPercent=0.7;}
+if(subsidy===3){subsidyDiscount=2.7;commissionPercent=1.2;}
+if(subsidy===5){subsidyDiscount=4;commissionPercent=4.4;}
+if(subsidy===99){subsidyDiscount=7.3;commissionPercent=22.9;}
+var finalRate=baseRate-salaryDiscount-insuranceDiscount-complexDiscount-subsidyDiscount;
+if(finalRate<2){finalRate=2;alerts+='<div class="warning">Ставка ограничена минимальной ставкой банка.</div>';}
+var standardPayment=pay(loan,baseRate,years);
+var promoPayment=pay(loan,finalRate,years);
+var overpay=promoPayment*years*12-loan;
+var standardOverpay=standardPayment*years*12-loan;
+var saving=standardOverpay-overpay;
+var commission=loan*commissionPercent/100;
+state={price:price,down:down,loan:loan,years:years,construction:construction,baseRate:baseRate,finalRate:finalRate,standardPayment:standardPayment,promoPayment:promoPayment,overpay:overpay,saving:saving,commission:commission,commissionPercent:commissionPercent,salaryDiscount:salaryDiscount,insuranceDiscount:insuranceDiscount,complexDiscount:complexDiscount,subsidyDiscount:subsidyDiscount,program:selName('program'),complex:selName('complex'),subsidy:selName('subsidy'),salary:salary==='yes'?'Да':'Нет',region:document.getElementById('region').value,escrow:escrow==='yes'?'Да':'Нет'};
+setText('rateResult',finalRate.toFixed(2)+'%');setText('paymentPromo',rub(promoPayment));setText('paymentBase',rub(standardPayment));setText('saving',rub(saving));setText('loanAmount',rub(loan));setText('baseRate',baseRate.toFixed(2)+'%');setText('salaryDiscount','-'+salaryDiscount+'%');setText('insuranceDiscount','-'+insuranceDiscount+'%');setText('complexDiscount','-'+complexDiscount+'%');setText('subsidyDiscount','-'+subsidyDiscount+'%');setText('commission',rub(commission)+' ('+commissionPercent+'%)');setText('overpay',rub(overpay));setText('profit',rub(saving));
+document.getElementById('alerts').innerHTML=alerts+'<div class="success">Расчет выполнен успешно.</div>';
+return true;
+}catch(e){alert('Ошибка расчета: '+e.message);console.error(e);return false;}}
+function addDetail(label,value){return '<div class="pdf-detail"><span>'+label+'</span><strong>'+value+'</strong></div>';}
+function preparePDF(){if(!calculate())return false;setText('pdfDate','Дата расчета: '+new Date().toLocaleDateString('ru-RU'));setText('pdfRate',state.finalRate.toFixed(2)+'%');setText('pdfPromoPayment',rub(state.promoPayment));setText('pdfBasePayment',rub(state.standardPayment));setText('pdfSaving',rub(state.saving));setText('pdfManagerName',document.getElementById('managerName').value);setText('pdfManagerPhone',document.getElementById('managerPhone').value);var d='';d+=addDetail('Объект',document.getElementById('objectName').value);d+=addDetail('Регион',state.region);if(chk('showPrice'))d+=addDetail('Стоимость квартиры',rub(state.price));if(chk('showDown'))d+=addDetail('Первоначальный взнос',rub(state.down));if(chk('showLoan'))d+=addDetail('Сумма кредита',rub(state.loan));d+=addDetail('Срок кредита',state.years+' лет');if(chk('showProgram'))d+=addDetail('Программа',state.program);if(chk('showSalary'))d+=addDetail('Зарплатный клиент Сбера',state.salary);if(chk('showComplex'))d+=addDetail('Комплексный продукт',state.complex);if(chk('showSubsidy'))d+=addDetail('Субсидирование',state.subsidy);if(chk('showOverpay'))d+=addDetail('Переплата',rub(state.overpay));if(chk('showCommission'))d+=addDetail('Комиссия застройщика',rub(state.commission));if(chk('showDiscounts'))d+=addDetail('Дисконты','ЗП: -'+state.salaryDiscount+'%, страх.: -'+state.insuranceDiscount+'%, КП: -'+state.complexDiscount+'%, субсид.: -'+state.subsidyDiscount+'%');document.getElementById('pdfDetails').innerHTML=d;return true;}
+async function generatePDF(){if(!preparePDF())return;if(typeof html2canvas==='undefined'||typeof window.jspdf==='undefined'){alert('Библиотеки PDF не загрузились. Проверьте интернет и обновите страницу.');return;}var area=document.getElementById('pdfTemplate');var canvas=await html2canvas(area,{scale:2,useCORS:true,backgroundColor:'#ffffff'});var imgData=canvas.toDataURL('image/png');var jsPDF=window.jspdf.jsPDF;var pdf=new jsPDF('p','mm','a4');var pageWidth=210,pageHeight=297,margin=8;var imgWidth=pageWidth-margin*2;var imgHeight=canvas.height*imgWidth/canvas.width;var heightLeft=imgHeight;var position=margin;pdf.addImage(imgData,'PNG',margin,position,imgWidth,imgHeight);heightLeft-=pageHeight;while(heightLeft>0){position=heightLeft-imgHeight+margin;pdf.addPage();pdf.addImage(imgData,'PNG',margin,position,imgWidth,imgHeight);heightLeft-=pageHeight;}pdf.save('ipoteka-sber-domclick-kommercheskoe-predlozhenie.pdf');}
+function buildResultText(){calculate();return 'Ипотечный расчет Сбер / Домклик
 
-    let salaryDiscount = salary === 'yes' ? 0.5 : 0;
-    let insuranceDiscount = insurance;
-    let complexDiscount = complex;
-
-    if(escrow === 'no' && complex > 0){alerts += '<div class="warning">Комплексный продукт доступен только для объектов с ПФ/эскроу Сбера.</div>'; complexDiscount = 0;}
-    if(construction < 3 && complex > 0){alerts += '<div class="warning">До сдачи дома менее 3 месяцев — комплексный продукт недоступен.</div>'; complexDiscount = 0;}
-    if(subsidy > 0 && complex > 0 && complex < 1){alerts += '<div class="warning">Субсидирование совместимо только с КП «на весь срок».</div>';}
-
-    let subsidyDiscount = 0, commissionPercent = 0;
-    if(subsidy === 1){subsidyDiscount=2.1;commissionPercent=.1;}
-    if(subsidy === 2){subsidyDiscount=2.5;commissionPercent=.7;}
-    if(subsidy === 3){subsidyDiscount=2.7;commissionPercent=1.2;}
-    if(subsidy === 5){subsidyDiscount=4;commissionPercent=4.4;}
-    if(subsidy === 99){subsidyDiscount=7.3;commissionPercent=22.9;}
-
-    let finalRate = baseRate - salaryDiscount - insuranceDiscount - complexDiscount - subsidyDiscount;
-    if(finalRate < 2){finalRate = 2; alerts += '<div class="warning">Ставка ограничена минимальной ставкой банка.</div>';}
-
-    const standardPayment = annuity(loan, baseRate, years);
-    const promoPayment = annuity(loan, finalRate, years);
-    const overpay = promoPayment * years * 12 - loan;
-    const standardOverpay = standardPayment * years * 12 - loan;
-    const saving = standardOverpay - overpay;
-    const commission = loan * commissionPercent / 100;
-
-    state = {price,down,loan,years,construction,baseRate,finalRate,standardPayment,promoPayment,overpay,saving,commission,commissionPercent,salaryDiscount,insuranceDiscount,complexDiscount,subsidyDiscount,
-        program:selectedText('program'), complex:selectedText('complex'), subsidy:selectedText('subsidy'), salary: salary==='yes'?'Да':'Нет', region:document.getElementById('region').value, escrow:escrow==='yes'?'Да':'Нет'};
-
-    document.getElementById('rateResult').innerText = finalRate.toFixed(2) + '%';
-    document.getElementById('paymentPromo').innerText = formatMoney(promoPayment);
-    document.getElementById('paymentBase').innerText = formatMoney(standardPayment);
-    document.getElementById('saving').innerText = formatMoney(saving);
-    document.getElementById('loanAmount').innerText = formatMoney(loan);
-    document.getElementById('baseRate').innerText = baseRate.toFixed(2) + '%';
-    document.getElementById('salaryDiscount').innerText = '-' + salaryDiscount + '%';
-    document.getElementById('insuranceDiscount').innerText = '-' + insuranceDiscount + '%';
-    document.getElementById('complexDiscount').innerText = '-' + complexDiscount + '%';
-    document.getElementById('subsidyDiscount').innerText = '-' + subsidyDiscount + '%';
-    document.getElementById('commission').innerText = formatMoney(commission) + ' (' + commissionPercent + '%)';
-    document.getElementById('overpay').innerText = formatMoney(overpay);
-    document.getElementById('profit').innerText = formatMoney(saving);
-    document.getElementById('alerts').innerHTML = alerts + '<div class="success">Расчет выполнен успешно.</div>';
-}
-
-function addDetail(label,value){return `<div class="pdf-detail"><span>${label}</span><strong>${value}</strong></div>`;}
-function preparePDFTemplate(){
-    calculate();
-    document.getElementById('pdfDate').innerText = 'Дата расчета: ' + new Date().toLocaleDateString('ru-RU');
-    document.getElementById('pdfRate').innerText = state.finalRate.toFixed(2) + '%';
-    document.getElementById('pdfPromoPayment').innerText = formatMoney(state.promoPayment);
-    document.getElementById('pdfBasePayment').innerText = formatMoney(state.standardPayment);
-    document.getElementById('pdfSaving').innerText = formatMoney(state.saving);
-    document.getElementById('pdfManagerName').innerText = document.getElementById('managerName').value;
-    document.getElementById('pdfManagerPhone').innerText = document.getElementById('managerPhone').value;
-
-    let details = '';
-    details += addDetail('Объект', document.getElementById('objectName').value);
-    details += addDetail('Регион', state.region);
-    if(isChecked('showPrice')) details += addDetail('Стоимость квартиры', formatMoney(state.price));
-    if(isChecked('showDown')) details += addDetail('Первоначальный взнос', formatMoney(state.down));
-    if(isChecked('showLoan')) details += addDetail('Сумма кредита', formatMoney(state.loan));
-    details += addDetail('Срок кредита', state.years + ' лет');
-    if(isChecked('showProgram')) details += addDetail('Программа', state.program);
-    if(isChecked('showSalary')) details += addDetail('Зарплатный клиент Сбера', state.salary);
-    if(isChecked('showComplex')) details += addDetail('Комплексный продукт', state.complex);
-    if(isChecked('showSubsidy')) details += addDetail('Субсидирование', state.subsidy);
-    if(isChecked('showOverpay')) details += addDetail('Переплата', formatMoney(state.overpay));
-    if(isChecked('showCommission')) details += addDetail('Комиссия застройщика', formatMoney(state.commission));
-    if(isChecked('showDiscounts')) details += addDetail('Дисконты', `ЗП: -${state.salaryDiscount}%, страх.: -${state.insuranceDiscount}%, КП: -${state.complexDiscount}%, субсид.: -${state.subsidyDiscount}%`);
-    document.getElementById('pdfDetails').innerHTML = details;
-}
-
-async function generatePDF(){
-    preparePDFTemplate();
-    const area = document.getElementById('pdfTemplate');
-    const canvas = await html2canvas(area,{scale:2,useCORS:true,backgroundColor:'#ffffff'});
-    const imgData = canvas.toDataURL('image/png');
-    const { jsPDF } = window.jspdf;
-    const pdf = new jsPDF('p','mm','a4');
-    const pageWidth = 210, pageHeight = 297, margin = 8;
-    const imgWidth = pageWidth - margin*2;
-    const imgHeight = canvas.height * imgWidth / canvas.width;
-    let heightLeft = imgHeight;
-    let position = margin;
-    pdf.addImage(imgData,'PNG',margin,position,imgWidth,imgHeight);
-    heightLeft -= pageHeight;
-    while(heightLeft > 0){
-        position = heightLeft - imgHeight + margin;
-        pdf.addPage();
-        pdf.addImage(imgData,'PNG',margin,position,imgWidth,imgHeight);
-        heightLeft -= pageHeight;
-    }
-    pdf.save('ipoteka-sber-domclick-kommercheskoe-predlozhenie.pdf');
-}
-
-function buildResultText(){
-    calculate();
-    return `Ипотечный расчет Сбер / Домклик
-
-Стоимость квартиры: ${formatMoney(state.price)}
-Первоначальный взнос: ${formatMoney(state.down)}
-Сумма кредита: ${formatMoney(state.loan)}
-Программа: ${state.program}
-Ставка: ${state.finalRate.toFixed(2)}%
-Платеж в льготный период: ${formatMoney(state.promoPayment)}
-Платеж после льготного периода: ${formatMoney(state.standardPayment)}
-Экономия клиента: ${formatMoney(state.saving)}`;
-}
+Стоимость квартиры: '+rub(state.price)+'
+Первоначальный взнос: '+rub(state.down)+'
+Сумма кредита: '+rub(state.loan)+'
+Программа: '+state.program+'
+Ставка: '+state.finalRate.toFixed(2)+'%
+Платеж в льготный период: '+rub(state.promoPayment)+'
+Платеж после льготного периода: '+rub(state.standardPayment)+'
+Экономия клиента: '+rub(state.saving);}
 function copyResult(){navigator.clipboard.writeText(buildResultText());alert('Расчет скопирован');}
-function sendEmail(){const text=encodeURIComponent(buildResultText()+'
+function sendEmail(){var text=encodeURIComponent(buildResultText()+'
 
-PDF с планировкой нужно приложить отдельным файлом после формирования.');window.location.href=`mailto:?subject=Ипотечный расчет&body=${text}`;}
+PDF с планировкой нужно приложить отдельным файлом после формирования.');window.location.href='mailto:?subject=Ипотечный расчет&body='+text;}
 function sendTelegram(){alert('Сначала нажмите «Сформировать PDF для клиента», затем отправьте скачанный PDF в Telegram или MAX. Автоматически прикрепить файл браузер не разрешает.');}
-
-calculate();
+window.onload=function(){calculate();};
 </script>
 </body>
 </html>
