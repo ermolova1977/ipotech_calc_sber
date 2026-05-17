@@ -1,0 +1,135 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Ипотечный калькулятор Сбер / Домклик</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand">
+      <div class="logo">✓</div>
+      <div>
+        <div class="brand-title">Ипотечный калькулятор</div>
+        <div class="brand-subtitle">Субсидирование + Комплексный продукт</div>
+      </div>
+    </div>
+    <button id="savePdf" class="ghost">Сохранить КП / PDF</button>
+  </header>
+
+  <main class="layout">
+    <section class="panel">
+      <h1>Расчет для менеджера</h1>
+      <p class="hint">Заполните параметры сделки. Калькулятор покажет базовый сценарий, выгоду клиента и ориентировочную стоимость субсидии для застройщика.</p>
+
+      <div class="grid">
+        <label>Стоимость объекта, ₽
+          <input id="price" type="number" value="8000000" step="100000">
+        </label>
+        <label>Первоначальный взнос, ₽
+          <input id="down" type="number" value="2000000" step="100000">
+        </label>
+        <label>Срок кредита, лет
+          <input id="years" type="number" value="30" min="1" max="30">
+        </label>
+        <label>До ввода объекта, мес.
+          <input id="buildMonths" type="number" value="18" min="0" max="60">
+        </label>
+      </div>
+
+      <div class="grid">
+        <label>Программа кредитования
+          <select id="program">
+            <option value="family">Семейная ипотека</option>
+            <option value="it">Ипотека для IT</option>
+            <option value="dvi">ДВИ</option>
+            <option value="dev" selected>Акция для застройщиков</option>
+            <option value="base">Базовая программа</option>
+          </select>
+        </label>
+        <label>Базовая ставка, %
+          <input id="baseRate" type="number" value="19.2" step="0.1">
+        </label>
+        <label>Субсидирование
+          <select id="subsidyTerm">
+            <option value="0">Не применяется</option>
+            <option value="12">1 год</option>
+            <option value="24">2 года</option>
+            <option value="36">3 года</option>
+            <option value="60">5 лет</option>
+            <option value="all">Весь срок</option>
+          </select>
+        </label>
+        <label>Дисконт субсидии, п.п.
+          <input id="subsidyDiscount" type="number" value="2" step="0.1">
+        </label>
+      </div>
+
+      <div class="grid">
+        <label>Комплексный продукт
+          <select id="kp">
+            <option value="none">Не применяется</option>
+            <option value="s1_all">Схема 1 — на весь срок</option>
+            <option value="s1_build">Схема 1 — на период строительства</option>
+            <option value="s2_all">Схема 2 — на весь срок</option>
+            <option value="s2_build">Схема 2 — на период строительства</option>
+          </select>
+        </label>
+        <label>Страховка / доп. дисконт, п.п.
+          <input id="extraDiscount" type="number" value="0" step="0.1">
+        </label>
+        <label>Комиссия за субсидию, % от кредита
+          <input id="commissionRate" type="number" value="0.7" step="0.1">
+        </label>
+        <label>Название ЖК / клиента
+          <input id="dealName" type="text" value="Расчет №1">
+        </label>
+      </div>
+
+      <div class="actions">
+        <button id="calc">Рассчитать</button>
+        <button id="copy">Скопировать итог</button>
+        <button id="reset" class="ghost">Сбросить</button>
+      </div>
+      <div id="warnings" class="warnings"></div>
+    </section>
+
+    <section id="proposal" class="result">
+      <div class="result-head">
+        <div>
+          <h2 id="dealTitle">Расчет №1</h2>
+          <p id="summary">Заполните поля и нажмите «Рассчитать».</p>
+        </div>
+        <span class="badge">Справочный расчет</span>
+      </div>
+
+      <div class="cards">
+        <div class="card"><span>Сумма кредита</span><strong id="loan">—</strong></div>
+        <div class="card"><span>Ставка на льготный период</span><strong id="promoRate">—</strong></div>
+        <div class="card"><span>Платеж в льготный период</span><strong id="promoPay">—</strong></div>
+        <div class="card"><span>Выгода клиента</span><strong id="benefit">—</strong></div>
+      </div>
+
+      <table>
+        <thead>
+          <tr><th>Показатель</th><th>Базовый сценарий</th><th>С учетом программ</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>Ставка в льготный период</td><td id="baseRateOut">—</td><td id="newRateOut">—</td></tr>
+          <tr><td>Платеж в льготный период</td><td id="basePayOut">—</td><td id="newPayOut">—</td></tr>
+          <tr><td>Платеж после льготного периода</td><td id="baseAfterOut">—</td><td id="newAfterOut">—</td></tr>
+          <tr><td>Переплата</td><td id="baseOverOut">—</td><td id="newOverOut">—</td></tr>
+          <tr><td>Ориентировочная комиссия за субсидию</td><td>—</td><td id="commissionOut">—</td></tr>
+        </tbody>
+      </table>
+
+      <div class="note">
+        Расчет носит справочный характер. Финальные платежи, комиссии и доступность программы подтверждаются банком при оформлении сделки.
+      </div>
+    </section>
+  </main>
+
+  <script src="app.js"></script>
+</body>
+</html>
