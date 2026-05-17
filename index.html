@@ -264,6 +264,13 @@ button:hover {
 
 </div>
 
+<div style="margin-top:20px;display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px;">
+<button onclick="window.print()">Распечатать / PDF</button>
+<button onclick="copyResult()">Скопировать расчет</button>
+<button onclick="sendEmail()">Отправить на почту</button>
+<button onclick="sendTelegram()">Telegram / WhatsApp</button>
+</div>
+
 <div id="alerts"></div>
 
 </div>
@@ -449,6 +456,24 @@ function calculate(){
 }
 
 calculate();
+function buildResultText(){
+    return `Ипотечный расчет Сбер / Домклик\n\nСтавка: ${document.getElementById('rateResult').innerText}\nПлатеж льготный: ${document.getElementById('paymentPromo').innerText}\nПлатеж базовый: ${document.getElementById('paymentBase').innerText}\nЭкономия: ${document.getElementById('saving').innerText}`;
+}
+
+function copyResult(){
+    navigator.clipboard.writeText(buildResultText());
+    alert('Расчет скопирован');
+}
+
+function sendEmail(){
+    const text = encodeURIComponent(buildResultText());
+    window.location.href = `mailto:?subject=Ипотечный расчет&body=${text}`;
+}
+
+function sendTelegram(){
+    const text = encodeURIComponent(buildResultText());
+    window.open(`https://t.me/share/url?url=&text=${text}`,'_blank');
+}
 </script>
 
 </body>
